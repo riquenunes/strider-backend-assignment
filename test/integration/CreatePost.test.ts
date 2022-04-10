@@ -1,6 +1,8 @@
 import chance from 'chance';
 import CreatePost from '../../src/application/use-cases/CreatePost';
 import { PostID } from '../../src/domain/entities/Post';
+import DailyPostCreationLimitReached from '../../src/domain/errors/DailyPostCreationLimitReached';
+import PostContentSizeLimitReached from '../../src/domain/errors/PostContentSizeLimitReached';
 import PostCreatedEvent from '../../src/domain/event/PostCreatedEvent';
 import PostRepository from '../../src/domain/repository/PostRepository';
 import ProfileRepository from '../../src/domain/repository/ProfileRepository';
@@ -66,7 +68,7 @@ describe('Post creation tests', () => {
 
     expect(
       createPostUseCase.execute(chance().twitter(), 'A'.repeat(778))
-    ).rejects.toThrow('Post content is too long');
+    ).rejects.toThrow(PostContentSizeLimitReached);
   });
 
   it('throws error when user has already created five posts today', () => {
@@ -84,6 +86,6 @@ describe('Post creation tests', () => {
 
     expect(
       createPostUseCase.execute(profile.username, 'Hello world!')
-    ).rejects.toThrow('You cannot post more than 5 times a day');
+    ).rejects.toThrow(DailyPostCreationLimitReached);
   });
 });

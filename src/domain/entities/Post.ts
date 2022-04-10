@@ -1,4 +1,5 @@
 import { v4 as uuidv4 } from 'uuid';
+import PostContentSizeLimitReached from '../errors/PostContentSizeLimitReached';
 
 export class PostID {
   constructor(
@@ -19,7 +20,7 @@ export default class Post {
   ) { }
 
   public validate(): void {
-    if (this.content.length > 777) throw new Error('Post content is too long');
+    if (this.content.length > 777) throw new PostContentSizeLimitReached();
   }
 }
 

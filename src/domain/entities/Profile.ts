@@ -1,3 +1,5 @@
+import DailyPostCreationLimitReached from '../errors/DailyPostCreationLimitReached';
+
 class ProfileStats {
 
 }
@@ -34,7 +36,7 @@ export default class Profile {
 
   public validateTodaysPostCount(): void {
     if (this.postCountTodayValue >= 5) {
-      throw new Error('You cannot post more than 5 times a day');
+      throw new DailyPostCreationLimitReached();
     }
   }
 
