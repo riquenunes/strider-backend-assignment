@@ -49,6 +49,6 @@ export class QuotedPost extends Repost {
   public validate(): void {
     super.validate();
 
-    if (this.quote.length > 777) throw new Error('Quote is too long');
+    if (this.quote.length > 777) throw new PostContentSizeLimitReached();
   }
 }
