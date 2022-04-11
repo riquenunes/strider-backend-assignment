@@ -1,4 +1,5 @@
 import UnfollowProfile from '../../src/application/use-cases/UnfollowProfile';
+import UnableToUnfollowSelf from '../../src/domain/errors/UnableToUnfollowSelf';
 import FollowerRemovedEvent from '../../src/domain/event/FollowerRemovedEvent';
 import ProfileRepository from '../../src/domain/repository/ProfileRepository';
 import Mediator from '../../src/domain/services/Mediator';
@@ -38,5 +39,47 @@ describe('Unfollowing tests', () => {
 
     expect(profileRepository.removeFollower).toHaveBeenCalledWith(followed, follower);
     expect(mediator.publish).toHaveBeenCalledWith(expect.any(FollowerRemovedEvent));
+  });
+
+  it('throws an error when trying to unfollow yourself', async () => {
+    const profile = new ProfileDummy({ postCountToday: 0 });
+
+    profileRepository.fetchProfile = jest.fn().mockResolvedValue(profile);
+
+    const followProfileUseCase = new UnfollowProfile(
+      profileRepository,
+      mediator,
+    );
+
+    await expect(
+      followProfileUseCase.execute(
+        profile.username,
+        profile.username,
+      ),
+    ).rejects.toThrow(UnableToUnfollowSelf);
+  });
+
+  it('decrements followers and following count', async () => {
+    const followed = new ProfileDummy({ postCountToday: 0, followersCount: 1 });
+    const follower = new ProfileDummy({ postCountToday: 0, followingCount: 1 });
+
+    profileRepository.fetchProfile = jest.fn().mockImplementation((username) => {
+      if (username === follower.username) return Promise.resolve(follower);
+
+      return Promise.resolve(followed);
+    });
+
+    const followProfileUseCase = new UnfollowProfile(
+      profileRepository,
+      mediator,
+    );
+
+    await followProfileUseCase.execute(
+      follower.username,
+      followed.username,
+    );
+
+    expect(followed.followersCount).toEqual(0);
+    expect(follower.followingCount).toEqual(0);
   });
 });

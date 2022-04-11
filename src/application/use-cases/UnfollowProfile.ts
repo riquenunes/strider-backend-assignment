@@ -8,14 +8,16 @@ export default class UnfollowProfile {
     private readonly mediator: Mediator,
   ) { }
 
-  public async execute(followerUsername: string, followedUsername: string): Promise<void> {
-    const [follower, followedProfile] = await Promise.all([
-      this.profileRepository.fetchProfile(followerUsername),
-      this.profileRepository.fetchProfile(followedUsername)
+  public async execute(username: string, usernameToBeUnfollowed: string): Promise<void> {
+    const [follower, toBeUnfollowed] = await Promise.all([
+      this.profileRepository.fetchProfile(username),
+      this.profileRepository.fetchProfile(usernameToBeUnfollowed)
     ]);
 
-    await this.profileRepository.removeFollower(followedProfile, follower);
+    follower.unfollow(toBeUnfollowed);
 
-    this.mediator.publish(new FollowerRemovedEvent(followedProfile, follower));
+    await this.profileRepository.removeFollower(toBeUnfollowed, follower);
+
+    this.mediator.publish(new FollowerRemovedEvent(toBeUnfollowed, follower));
   }
 }

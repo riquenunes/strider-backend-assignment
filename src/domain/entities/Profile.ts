@@ -1,5 +1,6 @@
 import DailyPostCreationLimitReached from '../errors/DailyPostCreationLimitReached';
 import UnableToFollowSelf from '../errors/UnableToFollowSelf';
+import UnableToUnfollowSelf from '../errors/UnableToUnfollowSelf';
 
 class ProfileStats {
 
@@ -54,9 +55,7 @@ export default class Profile {
   }
 
   public unfollow(profile: Profile): void {
-    if (profile.username === this.username) {
-      throw new Error('You cannot unfollow yourself');
-    }
+    if (profile.username === this.username) throw new UnableToUnfollowSelf();
 
     this.followingCountValue--;
     profile.followersCountValue--;
