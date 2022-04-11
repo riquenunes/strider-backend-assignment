@@ -8,14 +8,16 @@ export default class FollowProfile {
     private readonly mediator: Mediator,
   ) { }
 
-  public async execute(followerUsername: string, followedUsername: string): Promise<void> {
-    const [follower, followedProfile] = await Promise.all([
-      this.profileRepository.fetchProfile(followerUsername),
-      this.profileRepository.fetchProfile(followedUsername)
+  public async execute(username: string, usernameToBeFollowed: string): Promise<void> {
+    const [follower, toBeFollowed] = await Promise.all([
+      this.profileRepository.fetchProfile(username),
+      this.profileRepository.fetchProfile(usernameToBeFollowed)
     ]);
 
-    await this.profileRepository.addFollower(followedProfile, follower);
+    follower.follow(toBeFollowed);
 
-    this.mediator.publish(new FollowerAddedEvent(followedProfile, follower));
+    await this.profileRepository.addFollower(toBeFollowed, follower);
+
+    this.mediator.publish(new FollowerAddedEvent(toBeFollowed, follower));
   }
 }

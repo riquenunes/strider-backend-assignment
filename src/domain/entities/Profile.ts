@@ -1,4 +1,5 @@
 import DailyPostCreationLimitReached from '../errors/DailyPostCreationLimitReached';
+import UnableToFollowSelf from '../errors/UnableToFollowSelf';
 
 class ProfileStats {
 
@@ -46,12 +47,10 @@ export default class Profile {
   }
 
   public follow(profile: Profile): void {
-    if (profile.username === this.username) {
-      throw new Error('You cannot follow yourself');
-    }
+    if (profile.username === this.username) throw new UnableToFollowSelf();
 
     this.followingCountValue++;
-    profile.addFollower(this);
+    profile.followersCountValue++;
   }
 
   public unfollow(profile: Profile): void {
@@ -60,22 +59,6 @@ export default class Profile {
     }
 
     this.followingCountValue--;
-    profile.removeFollower(this);
-  }
-
-  private addFollower(profile: Profile): void {
-    if (profile.username === this.username) {
-      throw new Error('You cannot be followed by yourself');
-    }
-
-    this.followersCountValue++;
-  }
-
-  private removeFollower(profile: Profile): void {
-    if (profile.username === this.username) {
-      throw new Error('You cannot unfollow yourself');
-    }
-
-    this.followersCountValue--;
+    profile.followersCountValue--;
   }
 }
