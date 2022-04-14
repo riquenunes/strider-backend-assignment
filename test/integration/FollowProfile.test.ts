@@ -18,11 +18,11 @@ describe('Following tests', () => {
   });
 
   it('follows a profile', async () => {
-    const followed = new ProfileDummy({ postCountToday: 0 });
-    const follower = new ProfileDummy({ postCountToday: 0 });
+    const followed = new ProfileDummy({ todaysPostCount: 0 });
+    const follower = new ProfileDummy({ todaysPostCount: 0 });
 
     profileRepository.fetchProfile = jest.fn().mockImplementation((username) => {
-      if (username === follower.username) return Promise.resolve(follower);
+      if (username === follower.username.toString()) return Promise.resolve(follower);
 
       return Promise.resolve(followed);
     });
@@ -33,8 +33,8 @@ describe('Following tests', () => {
     );
 
     await followProfileUseCase.execute(
-      follower.username,
-      followed.username,
+      follower.username.toString(),
+      followed.username.toString(),
     );
 
     expect(profileRepository.addFollower).toHaveBeenCalledWith(followed, follower);
@@ -42,7 +42,7 @@ describe('Following tests', () => {
   });
 
   it('throws an error when trying to follow yourself', async () => {
-    const profile = new ProfileDummy({ postCountToday: 0 });
+    const profile = new ProfileDummy({ todaysPostCount: 0 });
 
     profileRepository.fetchProfile = jest.fn().mockResolvedValue(profile);
 
@@ -53,18 +53,18 @@ describe('Following tests', () => {
 
     await expect(
       followProfileUseCase.execute(
-        profile.username,
-        profile.username,
+        profile.username.toString(),
+        profile.username.toString(),
       ),
     ).rejects.toThrow(UnableToFollowSelf);
   });
 
   it('increments followers and following count', async () => {
-    const followed = new ProfileDummy({ postCountToday: 0, followersCount: 0 });
-    const follower = new ProfileDummy({ postCountToday: 0, followingCount: 0 });
+    const followed = new ProfileDummy({ todaysPostCount: 0, followersCount: 0 });
+    const follower = new ProfileDummy({ todaysPostCount: 0, followingCount: 0 });
 
     profileRepository.fetchProfile = jest.fn().mockImplementation((username) => {
-      if (username === follower.username) return Promise.resolve(follower);
+      if (username === follower.username.toString()) return Promise.resolve(follower);
 
       return Promise.resolve(followed);
     });
@@ -75,8 +75,8 @@ describe('Following tests', () => {
     );
 
     await followProfileUseCase.execute(
-      follower.username,
-      followed.username,
+      follower.username.toString(),
+      followed.username.toString(),
     );
 
     expect(followed.followersCount).toEqual(1);
