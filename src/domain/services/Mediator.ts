@@ -1,11 +1,9 @@
-import DomainEvent from '../event/DomainEvent';
 import EventEmitter from 'events';
 
 export interface Handler {
-  handle(event: DomainEvent): Promise<void>;
+  handle(event: any): Promise<void>;
 }
 
-// TODO figure out where this needs to go
 export default class Mediator {
   private readonly emitter: EventEmitter;
 
@@ -18,7 +16,7 @@ export default class Mediator {
     return this;
   }
 
-  public async publish(event: DomainEvent) {
+  public async publish<T>(event: T) {
     this.emitter.emit(event.constructor.name, event);
   }
 }
