@@ -1,4 +1,5 @@
 import { FastifyRequest, FastifyReply } from 'fastify';
+import { StatusCodes } from 'http-status-codes';
 import FetchHomepagePosts from '../../application/queries/fetch-homepage-posts/FetchHomepagePosts';
 import CreatePost from '../../application/use-cases/CreatePost'
 import CreatePostQuote from '../../application/use-cases/CreatePostQuote';
@@ -20,7 +21,7 @@ export default class PostController {
       request.query.allUsers === 'true',
     );
 
-    reply.status(200).send(posts);
+    reply.status(StatusCodes.OK).send(posts);
   }
 
   public async create(request: FastifyRequest<any>, reply: FastifyReply<any>) {
@@ -29,7 +30,7 @@ export default class PostController {
       request.body.content,
     );
 
-    reply.status(201).send(createdPost);
+    reply.status(StatusCodes.CREATED).send(createdPost);
   }
 
   public async quote(request: FastifyRequest<any>, reply: FastifyReply<any>) {
@@ -39,7 +40,7 @@ export default class PostController {
       request.params.postId,
     );
 
-    reply.status(201).send(createdPost);
+    reply.status(StatusCodes.CREATED).send(createdPost);
   }
 
   public async repost(request: FastifyRequest<any>, reply: FastifyReply<any>) {
@@ -48,6 +49,6 @@ export default class PostController {
       request.params.postId,
     );
 
-    reply.status(201).send(createdPost);
+    reply.status(StatusCodes.CREATED).send(createdPost);
   }
 }

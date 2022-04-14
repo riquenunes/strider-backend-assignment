@@ -3,6 +3,7 @@ import FetchProfile from '../../application/queries/fetch-profile/FetchProfile';
 import FetchProfilePosts from '../../application/queries/fetch-profile-posts/FetchProfilePosts';
 import FollowProfile from '../../application/use-cases/FollowProfile';
 import UnfollowProfile from '../../application/use-cases/UnfollowProfile';
+import { StatusCodes } from 'http-status-codes';
 
 export default class ProfileController {
   constructor(
@@ -19,7 +20,7 @@ export default class ProfileController {
       5,
     );
 
-    reply.status(200).send(posts);
+    reply.status(StatusCodes.OK).send(posts);
   }
 
   public async fetch(request: FastifyRequest<any>, reply: FastifyReply<any>) {
@@ -28,7 +29,7 @@ export default class ProfileController {
       request.params.username
     );
 
-    reply.status(200).send(profile);
+    reply.status(StatusCodes.OK).send(profile);
   }
 
   public async follow(request: FastifyRequest<any>, reply: FastifyReply<any>) {
@@ -37,7 +38,7 @@ export default class ProfileController {
       request.params.username
     );
 
-    reply.status(204).send();
+    reply.status(StatusCodes.NO_CONTENT).send();
   }
 
   public async unfollow(request: FastifyRequest<any>, reply: FastifyReply<any>) {
@@ -46,6 +47,6 @@ export default class ProfileController {
       request.params.username
     );
 
-    reply.status(204).send();
+    reply.status(StatusCodes.NO_CONTENT).send();
   }
 }

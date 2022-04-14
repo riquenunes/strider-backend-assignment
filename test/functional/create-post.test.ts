@@ -1,3 +1,4 @@
+import { StatusCodes } from 'http-status-codes';
 import container from '../../src/infrastructure/container';
 import { buildServer } from '../../src/server/server';
 import sendHttpRequest from '../helpers/send-http-request';
@@ -14,14 +15,14 @@ describe('POST /posts', () => {
 
   it('responds with 201 and the new post', async () => {
     const response = await sendHttpRequest({
-      url: 'http://127.0.0.1:1337/posts',
+      url: 'http://localhost:1337/posts',
       method: 'POST',
       data: {
         content: 'Hello World!',
       }
     });
 
-    expect(response.status).toBe(201);
+    expect(response.status).toBe(StatusCodes.CREATED);
     expect(response.data).toEqual({
       id: expect.any(String),
       author: 'supermax',
@@ -39,6 +40,6 @@ describe('POST /posts', () => {
       }
     });
 
-    expect(response.status).toBe(400);
+    expect(response.status).toBe(StatusCodes.BAD_REQUEST);
   });
 });
