@@ -1,4 +1,4 @@
-import Post, { PostID } from '../../domain/entities/Post';
+import Post, { OriginalPost, PostID } from '../../domain/entities/Post';
 import PostCreator from '../../domain/services/PostCreator';
 
 export default class CreatePost {
@@ -7,11 +7,11 @@ export default class CreatePost {
   ) { }
 
   public async execute(username: string, content: string): Promise<Post> {
-    const post = new Post(
+    const post = new OriginalPost(
       new PostID(),
       username,
-      content,
       new Date(),
+      content,
     );
 
     await this.postCreator.create(username, post);

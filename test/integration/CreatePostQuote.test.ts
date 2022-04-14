@@ -26,7 +26,7 @@ describe('Post quote creation tests', () => {
   });
 
   it('creates a new post quote', async () => {
-    const profile = new ProfileDummy({ postCountToday: 0 });
+    const profile = new ProfileDummy({ todaysPostCount: 0 });
     const existingPost = new PostDummy();
 
     profileRepository.fetchProfile = jest.fn().mockResolvedValue(profile);
@@ -40,17 +40,16 @@ describe('Post quote creation tests', () => {
 
     const useCase = new CreatePostQuote(postCreator, postRepository);
     const creationResult = await useCase.execute(
-      profile.username,
+      profile.username.toString(),
       'Hello world!',
       existingPost.id.toString(),
     );
 
     const postExpectation = expect.objectContaining({
       id: expect.any(PostID),
-      content: existingPost.content,
-      author: profile.username,
+      author: profile.username.toString(),
       createdAt: expect.any(Date),
-      quote: 'Hello world!',
+      content: 'Hello world!',
       originalPost: existingPost,
     });
 
@@ -60,7 +59,7 @@ describe('Post quote creation tests', () => {
   });
 
   it('throws error when the quote is above 777 characters', () => {
-    const profile = new ProfileDummy({ postCountToday: 0 });
+    const profile = new ProfileDummy({ todaysPostCount: 0 });
     const existingPost = new PostDummy();
 
     profileRepository.fetchProfile = jest.fn().mockResolvedValue(profile);
@@ -80,7 +79,7 @@ describe('Post quote creation tests', () => {
   });
 
   it('throws error when user has already created five posts today', () => {
-    const profile = new ProfileDummy({ postCountToday: 5 });
+    const profile = new ProfileDummy({ todaysPostCount: 5 });
     const existingPost = new PostDummy();
 
     profileRepository.fetchProfile = jest.fn().mockResolvedValue(profile);
@@ -95,7 +94,7 @@ describe('Post quote creation tests', () => {
     const useCase = new CreatePostQuote(postCreator, postRepository);
 
     expect(
-      useCase.execute(profile.username, 'Hello world!', existingPost.id.toString())
+      useCase.execute(profile.username.toString(), 'Hello world!', existingPost.id.toString())
     ).rejects.toThrow(DailyPostCreationLimitReached);
   });
 });

@@ -1,4 +1,4 @@
-import { PostID, QuotedPost } from '../../domain/entities/Post';
+import { QuotedPost } from '../../domain/entities/Post';
 import PostRepository from '../../domain/repository/PostRepository';
 import PostCreator from '../../domain/services/PostCreator';
 
@@ -10,13 +10,7 @@ export default class CreatePostQuote {
 
   public async execute(username: string, quote: string, postId: string): Promise<QuotedPost> {
     const originalPost = await this.postRepository.fetchPost(postId);
-    const post = new QuotedPost(
-      new PostID(),
-      username,
-      new Date(),
-      originalPost,
-      quote
-    );
+    const post = originalPost.createQuote(username, quote);
 
     await this.postCreator.create(username, post);
 

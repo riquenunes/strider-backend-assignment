@@ -25,7 +25,7 @@ describe('Post creation tests', () => {
   });
 
   it('creates a new original post', async () => {
-    const profile = new ProfileDummy({ postCountToday: 0 });
+    const profile = new ProfileDummy({ todaysPostCount: 0 });
 
     profileRepository.fetchProfile = jest.fn().mockResolvedValue(profile);
 
@@ -37,24 +37,24 @@ describe('Post creation tests', () => {
 
     const createPostUseCase = new CreatePost(postCreator);
     const creationResult = await createPostUseCase.execute(
-      profile.username,
+      profile.username.toString(),
       'Hello world!'
     );
 
     const postExpectation = expect.objectContaining({
       id: expect.any(PostID),
       content: 'Hello world!',
-      author: profile.username,
+      author: profile.username.toString(),
       createdAt: expect.any(Date),
     });
 
-    expect(creationResult).toEqual(postExpectation);
+    expect(creationResult).toMatchObject(postExpectation);
     expect(postRepository.createPost).toHaveBeenCalledWith(postExpectation);
     expect(mediator.publish).toHaveBeenCalledWith(expect.any(PostCreatedEvent));
   });
 
   it('throws error when post content is above 777 characters', () => {
-    const profile = new ProfileDummy({ postCountToday: 0 });
+    const profile = new ProfileDummy({ todaysPostCount: 0 });
 
     profileRepository.fetchProfile = jest.fn().mockResolvedValue(profile);
 
@@ -72,7 +72,7 @@ describe('Post creation tests', () => {
   });
 
   it('throws error when user has already created five posts today', () => {
-    const profile = new ProfileDummy({ postCountToday: 5 });
+    const profile = new ProfileDummy({ todaysPostCount: 5 });
 
     profileRepository.fetchProfile = jest.fn().mockResolvedValue(profile);
 
@@ -85,7 +85,7 @@ describe('Post creation tests', () => {
     const createPostUseCase = new CreatePost(postCreator);
 
     expect(
-      createPostUseCase.execute(profile.username, 'Hello world!')
+      createPostUseCase.execute(profile.username.toString(), 'Hello world!')
     ).rejects.toThrow(DailyPostCreationLimitReached);
   });
 });

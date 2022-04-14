@@ -9,17 +9,52 @@ export class PostID {
   public toString(): string {
     return this.value;
   }
+
+  public toJSON(): string {
+    return this.value;
+  }
 }
 
-export default class Post {
+export default abstract class Post {
   constructor(
     public readonly id: PostID,
     public readonly author: string,
-    public readonly content: string,
     public readonly createdAt: Date,
   ) { }
 
-  public validate(): void {
+  abstract validate(): void;
+
+  public createRepost(author: string): Repost {
+    return new Repost(
+      new PostID(),
+      author,
+      new Date(),
+      this,
+    );
+  }
+
+  public createQuote(author: string, quote: string): QuotedPost {
+    return new QuotedPost(
+      new PostID(),
+      author,
+      new Date(),
+      this,
+      quote,
+    );
+  }
+}
+
+export class OriginalPost extends Post {
+  constructor(
+    id: PostID,
+    author: string,
+    createdAt: Date,
+    public readonly content: string,
+  ) {
+    super(id, author, createdAt);
+  }
+
+  validate(): void {
     if (this.content.length > 777) throw new PostContentSizeLimitReached();
   }
 }
@@ -31,7 +66,11 @@ export class Repost extends Post {
     createdAt: Date,
     public readonly originalPost: Post,
   ) {
-    super(id, author, originalPost.content, createdAt);
+    super(id, author, createdAt);
+  }
+
+  validate(): void {
+
   }
 }
 
@@ -41,14 +80,12 @@ export class QuotedPost extends Repost {
     author: string,
     createdAt: Date,
     originalPost: Post,
-    public readonly quote: string,
+    public readonly content: string,
   ) {
     super(id, author, createdAt, originalPost);
   }
 
   public validate(): void {
-    super.validate();
-
-    if (this.quote.length > 777) throw new PostContentSizeLimitReached();
+    if (this.content.length > 777) throw new PostContentSizeLimitReached();
   }
 }

@@ -24,7 +24,7 @@ describe('Repost creation tests', () => {
   });
 
   it('creates a new repost', async () => {
-    const profile = new ProfileDummy({ postCountToday: 0 });
+    const profile = new ProfileDummy({ todaysPostCount: 0 });
     const existingPost = new PostDummy();
 
     profileRepository.fetchProfile = jest.fn().mockResolvedValue(profile);
@@ -38,14 +38,13 @@ describe('Repost creation tests', () => {
 
     const useCase = new CreateRepost(postCreator, postRepository);
     const creationResult = await useCase.execute(
-      profile.username,
+      profile.username.toString(),
       existingPost.id.toString(),
     );
 
     const postExpectation = expect.objectContaining({
       id: expect.any(PostID),
-      content: existingPost.content,
-      author: profile.username,
+      author: profile.username.toString(),
       createdAt: expect.any(Date),
       originalPost: existingPost,
     });
@@ -56,7 +55,7 @@ describe('Repost creation tests', () => {
   });
 
   it('throws error when user has already created five posts today', () => {
-    const profile = new ProfileDummy({ postCountToday: 5 });
+    const profile = new ProfileDummy({ todaysPostCount: 5 });
     const existingPost = new PostDummy();
 
     profileRepository.fetchProfile = jest.fn().mockResolvedValue(profile);
@@ -71,7 +70,7 @@ describe('Repost creation tests', () => {
     const useCase = new CreateRepost(postCreator, postRepository);
 
     expect(
-      useCase.execute(profile.username, existingPost.id.toString())
+      useCase.execute(profile.username.toString(), existingPost.id.toString())
     ).rejects.toThrow(DailyPostCreationLimitReached);
   });
 });
