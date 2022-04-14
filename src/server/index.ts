@@ -1,9 +1,10 @@
 import container from '../infrastructure/container';
 import { buildServer } from './server';
+import appConfig from '../../config/application';
 
 buildServer(container)
   .then(server => {
-    server.listen(1337, '0.0.0.0');
+    server.listen(appConfig.port, '0.0.0.0');
     process.on('SIGINT', async () => {
       await server.close();
       await container.db.destroy();

@@ -1,21 +1,21 @@
 import { StatusCodes } from 'http-status-codes';
-import container from '../../src/infrastructure/container';
-import { buildServer } from '../../src/server/server';
 import sendHttpRequest from '../helpers/send-http-request';
+import startServer from '../helpers/start-server';
 
 describe('POST /posts', () => {
   let server;
+  let basePath;
 
   beforeAll(async () => {
-    server = await buildServer(container);
-    await server.listen(1337);
+    server = await startServer();
+    basePath = `http://localhost:${server.server.address().port}`;
   });
 
   afterAll(() => server.close());
 
   it('responds with 201 and the new post', async () => {
     const response = await sendHttpRequest({
-      url: 'http://localhost:1337/posts',
+      url: `${basePath}/posts`,
       method: 'POST',
       data: {
         content: 'Hello World!',
@@ -33,7 +33,7 @@ describe('POST /posts', () => {
 
   it('responds with 400 when trying to create a post with more than 777 characters', async () => {
     const response = await sendHttpRequest({
-      url: 'http://localhost:1337/posts',
+      url: `${basePath}/posts`,
       method: 'POST',
       data: {
         content: 'A'.repeat(778),

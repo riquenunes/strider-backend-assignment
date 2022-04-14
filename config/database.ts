@@ -1,7 +1,7 @@
 import path from 'path';
 import env from 'env-var';
 
-const config = {
+export default {
   client: 'pg',
   connection: {
     host: env.get('DB_HOST').asString(),
@@ -26,5 +26,3 @@ const config = {
     post: 'post'
   }
 };
-
-export default config;
