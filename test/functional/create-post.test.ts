@@ -1,6 +1,17 @@
+import container from '../../src/infrastructure/container';
+import { buildServer } from '../../src/server/server';
 import sendHttpRequest from '../helpers/send-http-request';
 
 describe('POST /posts', () => {
+  let server;
+
+  beforeAll(async () => {
+    server = await buildServer(container);
+    await server.listen(1337);
+  });
+
+  afterAll(() => server.close());
+
   it('responds with 201 and the new post', async () => {
     const response = await sendHttpRequest({
       url: 'http://127.0.0.1:1337/posts',
