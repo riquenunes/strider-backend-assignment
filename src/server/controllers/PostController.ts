@@ -36,7 +36,7 @@ export default class PostController {
   public async quote(request: FastifyRequest<any>, reply: FastifyReply<any>) {
     const createdPost = await this.createPostQuoteUseCase.execute(
       request.username,
-      request.body.quote,
+      request.body.content,
       request.params.postId,
     );
 
