@@ -29,4 +29,16 @@ describe('POST /posts', () => {
       content: 'Hello World!',
     });
   });
+
+  it('responds with 400 when trying to create a post with more than 777 characters', async () => {
+    const response = await sendHttpRequest({
+      url: 'http://localhost:1337/posts',
+      method: 'POST',
+      data: {
+        content: 'A'.repeat(778),
+      }
+    });
+
+    expect(response.status).toBe(400);
+  });
 });
