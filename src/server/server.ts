@@ -12,6 +12,7 @@ export const buildServer = async ({ db, controllers }: Container) => {
 
     server
       .register(router(
+        controllers.profile,
         controllers.post,
       ));
 

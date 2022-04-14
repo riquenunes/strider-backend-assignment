@@ -1,9 +1,12 @@
 import { FastifyInstance } from 'fastify';
 import PostController from '../controllers/PostController';
+import ProfileController from '../controllers/ProfileController';
+import profileRouter from './profile';
 import postRouter from './post';
 import errorHandler from '../plugins/error-handler';
 
 export default (
+  profileController: ProfileController,
   postController: PostController,
 ) => (app: FastifyInstance) => {
   return app
@@ -15,6 +18,7 @@ export default (
 
       done();
     })
+    .register(profileRouter(profileController), { prefix: '/profiles' })
     .register(postRouter(postController), { prefix: '/posts' })
     .setErrorHandler(errorHandler);
 }

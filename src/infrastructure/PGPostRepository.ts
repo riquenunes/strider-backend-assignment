@@ -3,7 +3,7 @@ import Post, { OriginalPost, QuotedPost, Repost } from '../domain/entities/Post'
 import PostNotFound from '../domain/errors/PostNotFound';
 import PostRepository from '../domain/repository/PostRepository';
 import dbConfig from '../../config/database';
-import { convertDbPost } from '../application/queries/convertDbPost';
+import dbPostToPost from './db-post-mapper';
 
 const { tables } = dbConfig;
 
@@ -49,6 +49,6 @@ export default class PGPostRepository implements PostRepository {
 
     if (!dbPost) throw new PostNotFound(id);
 
-    return convertDbPost(dbPost);
+    return dbPostToPost(dbPost);
   }
 }
