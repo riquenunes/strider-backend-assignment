@@ -1,6 +1,7 @@
 import { FastifyInstance } from 'fastify';
 import PostController from '../controllers/PostController';
 import postRouter from './post';
+import errorHandler from '../plugins/error-handler';
 
 export default (
   postController: PostController,
@@ -14,5 +15,6 @@ export default (
 
       done();
     })
-    .register(postRouter(postController), { prefix: '/posts' });
+    .register(postRouter(postController), { prefix: '/posts' })
+    .setErrorHandler(errorHandler);
 }
