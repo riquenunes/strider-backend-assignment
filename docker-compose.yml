@@ -5,12 +5,11 @@ services:
     image: postgres:alpine
     restart: always
     env_file: .env
-    tty: true
-    stdin_open: true
     environment:
       - POSTGRES_USER=${DB_USERNAME}
       - POSTGRES_PASSWORD=${DB_PASSWORD}
       - POSTGRES_DB=${DB_DATABASE}
+    command: postgres -c fsync=off -c synchronous_commit=off -c full_page_writes=off
   posterr-api:
     restart: always
     image: node:16-alpine
@@ -19,7 +18,7 @@ services:
     volumes:
       - .:/app
     ports:
-      - "${PORT}:${PORT}"
+      - "1337:1337"
     tty: true
     stdin_open: true
     depends_on:

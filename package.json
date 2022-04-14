@@ -8,7 +8,7 @@
     "migrate:make": "ts-node -r dotenv/config node_modules/.bin/knex --client pg --knexfile config/database.ts migrate:make -x ts",
     "seed:make": "ts-node -r dotenv/config node_modules/.bin/knex --client pg --knexfile config/database.ts seed:make -x ts",
     "test": "docker-compose run --rm posterr-api npx jest --verbose test/ --forceExit",
-    "start": "docker-compose run --rm posterr-api npx ts-node src/server/index.ts"
+    "start": "docker-compose run --rm --service-ports posterr-api npx ts-node src/server/index.ts"
   },
   "repository": {
     "type": "git",
