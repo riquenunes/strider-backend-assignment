@@ -10,12 +10,13 @@ export async function up(knex: Knex): Promise<void> {
     table.string('author', 14).notNullable();
     table.uuid('originalPostId').nullable();
     table.dateTime('createdAt').defaultTo(knex.fn.now());
+    table.increments('position').defaultTo(0);
 
     table.foreign('originalPostId').references('id').inTable(tables.post);
     table.foreign('author').references('username').inTable(tables.profile);
 
     table.index('author');
-    table.index('createdAt');
+    table.index('position', 'position_idx', 'BTREE');
   });
 }
 

@@ -1,6 +1,6 @@
 import { FastifyRequest, FastifyReply } from 'fastify';
 import { StatusCodes } from 'http-status-codes';
-import FetchHomepagePosts from '../../application/queries/fetch-homepage-posts/FetchHomepagePosts';
+import FetchHomepagePosts from '../../application/queries/fetch-posts/fetch-homepage-posts/FetchHomepagePosts';
 import CreatePost from '../../application/use-cases/CreatePost'
 import CreatePostQuote from '../../application/use-cases/CreatePostQuote';
 import CreateRepost from '../../application/use-cases/CreateRepost';
@@ -16,8 +16,7 @@ export default class PostController {
   public async fetchHomePosts(request: FastifyRequest<any>, reply: FastifyReply<any>) {
     const posts = await this.fetchHomepagePostsQuery.execute(
       request.username,
-      +request.query.skip,
-      10,
+      request.query.oldestPostPosition,
       request.query.allUsers === 'true',
     );
 

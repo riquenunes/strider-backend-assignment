@@ -1,6 +1,6 @@
 import { FastifyRequest, FastifyReply } from 'fastify';
 import FetchProfile from '../../application/queries/fetch-profile/FetchProfile';
-import FetchProfilePosts from '../../application/queries/fetch-profile-posts/FetchProfilePosts';
+import FetchProfilePosts from '../../application/queries/fetch-posts/fetch-profile-posts/FetchProfilePosts';
 import FollowProfile from '../../application/use-cases/FollowProfile';
 import UnfollowProfile from '../../application/use-cases/UnfollowProfile';
 import { StatusCodes } from 'http-status-codes';
@@ -16,8 +16,7 @@ export default class ProfileController {
   public async fetchProfilePosts(request: FastifyRequest<any>, reply: FastifyReply<any>) {
     const posts = await this.fetchProfilePostsQuery.execute(
       request.params.username,
-      request.query.skip,
-      5,
+      request.query.oldestPostPosition,
     );
 
     reply.status(StatusCodes.OK).send(posts);

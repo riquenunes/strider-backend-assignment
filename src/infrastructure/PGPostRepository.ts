@@ -3,7 +3,6 @@ import Post, { OriginalPost, QuotedPost, Repost } from '../domain/entities/Post'
 import PostNotFound from '../domain/errors/PostNotFound';
 import PostRepository from '../domain/repository/PostRepository';
 import dbConfig from '../../config/database';
-import dbPostToPost from './db-post-mapper';
 
 const { tables } = dbConfig;
 
@@ -11,6 +10,46 @@ export default class PGPostRepository implements PostRepository {
   constructor(
     private readonly db: Knex,
   ) { }
+
+  private convertDbPostToPost(dbPost: any): Post {
+    if (dbPost.content) {
+      if (dbPost.originalPostId) {
+        return new QuotedPost(
+          dbPost.id,
+          dbPost.author,
+          dbPost.createdAt,
+          this.convertDbPostToPost({
+            id: dbPost.originalPostId,
+            author: dbPost.originalPostAuthor,
+            createdAt: dbPost.originalPostCreatedAt,
+            content: dbPost.originalPostContent,
+            originalPostId: null,
+          }),
+          dbPost.content,
+        );
+      }
+
+      return new OriginalPost(
+        dbPost.id,
+        dbPost.author,
+        dbPost.createdAt,
+        dbPost.content,
+      );
+    }
+
+    return new Repost(
+      dbPost.id,
+      dbPost.author,
+      dbPost.createdAt,
+      this.convertDbPostToPost({
+        id: dbPost.originalPostId,
+        author: dbPost.originalPostAuthor,
+        createdAt: dbPost.originalPostCreatedAt,
+        content: dbPost.originalPostContent,
+        originalPostId: null,
+      }),
+    );
+  }
 
   async createPost(post: Post): Promise<void> {
     const getContent = () => {
@@ -49,6 +88,6 @@ export default class PGPostRepository implements PostRepository {
 
     if (!dbPost) throw new PostNotFound(id);
 
-    return dbPostToPost(dbPost);
+    return this.convertDbPostToPost(dbPost);
   }
 }
