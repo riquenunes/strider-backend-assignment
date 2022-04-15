@@ -1,4 +1,4 @@
-import { Knex } from 'knex';
+import knex, { Knex } from 'knex';
 import Post, { OriginalPost, QuotedPost, Repost } from '../domain/entities/Post';
 import PostNotFound from '../domain/errors/PostNotFound';
 import PostRepository from '../domain/repository/PostRepository';
@@ -66,6 +66,7 @@ export default class PGPostRepository implements PostRepository {
       author: post.author,
       createdAt: post.createdAt,
       content: getContent(),
+      contentTokens: this.db.raw(`to_tsvector(?)`, getContent()),
       originalPostId: post instanceof Repost ? post.originalPost.id : null,
     });
   }

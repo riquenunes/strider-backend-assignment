@@ -48,6 +48,12 @@ export default class FetchPostsQueryBuilder {
     return this;
   }
 
+  whereContentIsSimilarTo(search: string): FetchPostsQueryBuilder {
+    this.query = this.query.whereRaw(`"${tables.post}"."contentTokens" @@ to_tsquery(?)`, search);
+
+    return this;
+  }
+
   async getResults(): Promise<FetchPostsOutput[]> {
     const dbPosts = await this.query;
 

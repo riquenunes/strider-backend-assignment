@@ -20,6 +20,7 @@ import PostController from '../server/controllers/PostController';
 import ProfileController from '../server/controllers/ProfileController';
 import PGPostRepository from './PGPostRepository';
 import PGProfileRepository from './PGProfileRepository';
+import SearchPosts from '../application/queries/fetch-posts/search-posts/SearchPosts';
 
 const db = knex(dbConfig);
 
@@ -54,6 +55,7 @@ const useCases = {
 const queries = {
   fetchProfilePosts: new FetchProfilePosts(db),
   fetchHomepagePosts: new FetchHomepagePosts(db),
+  searchPosts: new SearchPosts(db),
   fetchProfile: new FetchProfile(db),
 }
 
@@ -63,6 +65,7 @@ const controllers = {
     useCases.createPostQuote,
     useCases.createRepost,
     queries.fetchHomepagePosts,
+    queries.searchPosts,
   ),
   profile: new ProfileController(
     useCases.followProfile,
