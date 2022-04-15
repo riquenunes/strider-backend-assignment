@@ -95,6 +95,7 @@ To implement this we will need to:
 
 These are the things I would improve if I had a little more time:
 - Add more functional tests. The current ones are not enough to cover some areas that were not covered by the tests of the core part
+- Refactor `PGPostRepository`'s `convertDbPostToPost` method. It's maybe a bit more complex than it needs to be
 - Add logging
 - Implement input validation and sanitization using JSON schema (possibly using [TypeBox](https://github.com/sinclairzx81/typebox))
 - Post and Profile contexts would probably be better if separated into different directories. This would help when implementing the microservices approach described below
