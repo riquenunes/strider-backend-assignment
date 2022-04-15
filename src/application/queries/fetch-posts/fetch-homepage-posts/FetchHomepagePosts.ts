@@ -1,6 +1,9 @@
 import { Knex } from 'knex';
 import FetchPostsOutput from '../FetchPostsOutput';
 import FetchPostsQueryBuilder from '../FetchPostsQueryBuilder';
+import appConfig from '../../../../../config/application';
+
+const { homepagePostsLimit } = appConfig;
 
 export default class FetchHomepagePosts {
   constructor(
@@ -12,13 +15,13 @@ export default class FetchHomepagePosts {
 
     if (allUsers) {
       return queryBuilder
-        .paginate(10, oldestPostPosition)
+        .paginate(homepagePostsLimit, oldestPostPosition)
         .getResults();
     }
 
     return queryBuilder
       .whereAuthorIsFollowedBy(username)
-      .paginate(10, oldestPostPosition)
+      .paginate(homepagePostsLimit, oldestPostPosition)
       .getResults();
   }
 }

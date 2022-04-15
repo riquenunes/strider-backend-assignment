@@ -1,6 +1,9 @@
 import FetchPostsQueryBuilder from '../FetchPostsQueryBuilder';
 import FetchPostsOutput from '../FetchPostsOutput';
 import { Knex } from 'knex';
+import appConfig from '../../../../../config/application';
+
+const { profilePagePostsLimit } = appConfig;
 
 export default class FetchProfilePosts {
   constructor(
@@ -12,7 +15,7 @@ export default class FetchProfilePosts {
 
     return queryBuilder
       .whereAuthorIs(username)
-      .paginate(5, oldestPostPosition)
+      .paginate(profilePagePostsLimit, oldestPostPosition)
       .getResults();
   }
 }
